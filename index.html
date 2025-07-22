@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>肖麒的博客</title>
+    <script src="https://cdn.tailwindcss.com/3.3.3"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+            line-height: 1.6;
+        }
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .article-card {
+            transition: all 0.3s ease;
+        }
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .markdown-body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: #374151;
+        }
+        .markdown-body h1, 
+        .markdown-body h2, 
+        .markdown-body h3, 
+        .markdown-body h4, 
+        .markdown-body h5, 
+        .markdown-body h6 {
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+            font-weight: 600;
+            color: #111827;
+        }
+        .markdown-body p {
+            margin-bottom: 1.2em;
+        }
+        .markdown-body a {
+            color: #3b82f6;
+            text-decoration: none;
+            border-bottom: 1px solid #93c5fd;
+        }
+        .markdown-body a:hover {
+            color: #1d4ed8;
+            border-bottom-color: #1d4ed8;
+        }
+        .markdown-body code {
+            background-color: #f3f4f6;
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+        .markdown-body pre {
+            background-color: #f3f4f6;
+            padding: 1em;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 1.5em;
+        }
+        .markdown-body blockquote {
+            border-left: 4px solid #e5e7eb;
+            padding-left: 1em;
+            margin-left: 0;
+            color: #6b7280;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="glassmorphism sticky top-0 z-50 py-4 px-6 shadow-sm">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-gray-800 hover:text-indigo-600 transition-colors" onclick="showHome()">肖麒的博客</a>
+            <div class="hidden md:flex space-x-8">
+                <a href="#" class="text-gray-600 hover:text-indigo-600 transition-colors" onclick="showHome()">首页</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-600 transition-colors" onclick="showArticles()">文章</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-600 transition-colors" onclick="showAbout()">关于</a>
+            </div>
+            <button class="md:hidden text-gray-600 focus:outline-none" id="mobileMenuButton">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 移动端菜单 -->
+    <div class="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40 hidden" id="mobileMenuOverlay"></div>
+    <div class="md:hidden fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-300" id="mobileMenu">
+        <div class="p-6">
+            <button class="absolute top-4 right-4 text-gray-500" onclick="toggleMobileMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="flex flex-col space-y-6 mt-8">
+                <a href="#" class="text-lg text-gray-800 hover:text-indigo-600" onclick="showHome(); toggleMobileMenu()">首页</a>
+                <a href="#" class="text-lg text-gray-800 hover:text-indigo-600" onclick="showArticles(); toggleMobileMenu()">文章</a>
+                <a href="#" class="text-lg text-gray-800 hover:text-indigo-600" onclick="showAbout(); toggleMobileMenu()">关于</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <main class="container mx-auto py-12 px-4 md:px-8">
+        <!-- 首页 -->
+        <div id="home-page">
+            <div class="glassmorphism p-8 mb-12">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="w-32 h-32 rounded-full bg-indigo-100 flex items-center justify-center mb-6 md:mb-0 md:mr-8">
+                        <i class="fas fa-user text-5xl text-indigo-500"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800 mb-2">肖麒</h1>
+                        <p class="text-gray-600 mb-4">前端开发者 & 技术博主</p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-gray-500 hover:text-indigo-600"><i class="fab fa-github text-xl"></i></a>
+                            <a href="#" class="text-gray-500 hover:text-indigo-600"><i class="fab fa-twitter text-xl"></i></a>
+                            <a href="#" class="text-gray-500 hover:text-indigo-600"><i class="fab fa-linkedin text-xl"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">最新文章</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="article-card glassmorphism p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Vue 3 组合式 API 实践</h3>
+                    <p class="text-gray-600 text-sm mb-4">2023年10月15日</p>
+                    <p class="text-gray-700 mb-4">探索 Vue 3 组合式 API 在实际项目中的应用场景和最佳实践...</p>
+                    <a href="#" class="text-indigo-600 hover:text-indigo-800 font-medium" onclick="showArticle('article1')">阅读更多 →</a>
+                </div>
+                <div class="article-card glassmorphism p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">TypeScript 类型系统深入</h3>
+                    <p class="text-gray-600 text-sm mb-4">2023年9月28日</p>
+                    <p class="text-gray-700 mb-4">深入解析 TypeScript 类型系统的强大功能和高级用法...</p>
+                    <a href="#" class="text-indigo-600 hover:text-indigo-800 font-medium" onclick="showArticle('article2')">阅读更多 →</a>
+                </div>
+                <div class="article-card glassmorphism p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Tailwind CSS 实战技巧</h3>
+                    <p class="text-gray-600 text-sm mb-4">2023年9月10日</p>
+                    <p class="text-gray-700 mb-4">分享 Tailwind CSS 在实际项目中的高效使用技巧...</p>
+                    <a href="#" class="text-indigo-600 hover:text-indigo-800 font-medium" onclick="showArticle('article3')">阅读更多 →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文章列表页 -->
+        <div id="articles-page" class="hidden">
+            <h1 class="text-3xl font-bold text-gray-800 mb-8">所有文章</h1>
+            <div class="space-y-6">
+                <div class="article-card glassmorphism p-6 rounded-lg">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Vue 3 组合式 API 实践</h2>
+                    <p class="text-gray-600 text-sm mb-4">2023年10月15日</p>
+                    <p class="text-gray-700 mb-4">探索 Vue 3 组合式 API 在实际项目中的应用场景和最佳实践...</p>
+                    <a href="#" class="text-indigo-600 hover:text-indigo-800 font-medium" onclick="showArticle('article1')">阅读全文 →</a>
+                </div>
+                <div class="article-card glassmorphism p-6 rounded-lg">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2">TypeScript 类型系统深入</h2>
+                    <p class="text-gray-600 text-sm mb-4">2023年9月28日</p>
+                    <p class="text-gray-700 mb-4">深入解析 TypeScript 类型系统的强大功能和高级用法...</p>
+                    <a href="#" class="text-indigo-600 hover:text-indigo-800 font-medium" onclick="showArticle('article2')">阅读全文 →</a>
+                </div>
+                <div class="article-card glassmorphism p-6 rounded-lg">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Tailwind CSS 实战技巧</h2>
+                    <p class="text-gray-600 text-sm mb-4">2023年9月10日</p>
+                    <p class="text-gray-700 mb-4">分享 Tailwind CSS 在实际项目中的高效使用技巧...</p>
+                    <a href="#" class="text-indigo-600 hover:text-indigo-800 font-medium" onclick="showArticle('article3')">阅读全文 →</a>
+                </div>
+                <div class="article-card glassmorphism p-6 rounded-lg">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2">React Hooks 最佳实践</h2>
+                    <p class="text-gray-600 text-sm mb-4">2023年8月22日</p>
+                    <p class="text-gray-700 mb-4">总结 React Hooks 在实际开发中的最佳实践和常见陷阱...</p>
+                    <a href="#" class="text-indigo-600 hover:text-indigo-800 font-medium" onclick="showArticle('article4')">阅读全文 →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文章详情页 -->
+        <div id="article-page" class="hidden">
+            <div class="glassmorphism p-8 mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-4" id="article-title">Vue 3 组合式 API 实践</h1>
+                <div class="flex items-center text-gray-600 mb-6">
+                    <span class="mr-4"><i class="far fa-calendar mr-1"></i> 2023年10月15日</span>
+                    <span><i class="far fa-clock mr-1"></i> 阅读时间: 8分钟</span>
+                </div>
+                <div class="markdown-body" id="article-content">
+                    <!-- Markdown 内容将通过 JavaScript 动态加载 -->
+                </div>
+            </div>
+            <div class="flex justify-between">
+                <a href="#" class="text-indigo-600 hover:text-indigo-800 font-medium" onclick="showArticles()"><i class="fas fa-arrow-left mr-2"></i>返回列表</a>
+                <a href="#" class="text-indigo-600 hover:text-indigo-800 font-medium" onclick="showHome()"><i class="fas fa-home mr-2"></i>返回首页</a>
+            </div>
+        </div>
+
+        <!-- 关于页 -->
+        <div id="about-page" class="hidden">
+            <div class="glassmorphism p-8 mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">关于我</h1>
+                <div class="markdown-body">
+                    <p>你好，我是肖麒，一名前端开发者，热爱技术分享。</p>
+                    
+                    <h2>技术栈</h2>
+                    <ul>
+                        <li>JavaScript/TypeScript</li>
+                        <li>Vue/React</li>
+                        <li>Node.js</li>
+                        <li>Webpack/Vite</li>
+                    </ul>
+                    
+                    <h2>联系我</h2>
+                    <p>如果你有任何问题或建议，欢迎通过以下方式联系我：</p>
+                    <ul>
+                        <li>邮箱: example@example.com</li>
+                        <li>GitHub: github.com/xiaoqi</li>
+                        <li>Twitter: @xiaoqi</li>
+                    </ul>
+                </div>
+            </div>
+            <a href="#" class="text-indigo-600 hover:text-indigo-800 font-medium" onclick="showHome()"><i class="fas fa-arrow-left mr-2"></i>返回首页</a>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-100 py-8 mt-12">
+        <div class="container mx-auto px-4 text-center text-gray-600">
+            <p>© 2023 肖麒的博客. 保留所有权利.</p>
+            <p class="mt-2">
+                <span>页面内容均由 AI 生成，仅供参考</span>
+                <span class="mx-2">•</span>
+                <a href="https://space.coze.cn" class="text-indigo-600 hover:text-indigo-800">created by coze space</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // 文章数据
+        const articles = {
+            'article1': {
+                title: 'Vue 3 组合式 API 实践',
+                date: '2023年10月15日',
+                content: `
+# Vue 3 组合式 API 实践
+
+Vue 3 引入了组合式 API (Composition API)，这是对 Vue 2 选项式 API 的重大改进。组合式 API 提供了更灵活、更强大的代码组织方式，特别适合复杂组件的开发。
+
+## 为什么需要组合式 API
+
+在 Vue 2 中，我们使用选项式 API 组织组件代码：
+
+\`\`\`javascript
+export default {
+    data() {
+        return {
+            count: 0
+        }
+    },
+    methods: {
+        increment() {
+            this.count++
+        }
+    },
+    mounted() {
+        console.log('Component mounted')
+    }
+}
+\`\`\`
+
+这种方式在简单组件中工作良好，但在复杂组件中会导致几个问题：
+
+1. **逻辑关注点分散**：相关代码被分散在不同的选项中
+2. **代码复用困难**：mixins 和 scoped slots 都有各自的缺点
+3. **类型推断有限**：TypeScript 支持不够理想
+
+## 组合式 API 基础
+
+组合式 API 的核心是 \`setup()\` 函数，它在组件创建之前执行：
+
+\`\`\`javascript
+import { ref, onMounted } from 'vue'
+
+export default {
+    setup() {
+        const count = ref(0)
+        
+        function increment() {
+            count.value++
+        }
+        
+        onMounted(() => {
+            console.log('Component mounted')
+        })
+        
+        return {
+            count,
+            increment
+        }
+    }
+}
+\`\`\`
+
+## 实际应用场景
+
+### 1. 逻辑复用
+
+我们可以将相关逻辑提取到组合式函数中：
+
+\`\`\`javascript
+// useCounter.js
+import { ref } from 'vue'
+
+export function useCounter(initialValue = 0) {
+    const count = ref(initialValue)
+    
+    function increment() {
+        count.value++
+    }
+    
+    function decrement() {
+        count.value--
+    }
+    
+    return {
+        count,
+        increment,
+        decrement
+    }
+}
+\`\`\`
+
+然后在组件中使用：
+
+\`\`\`javascript
+import { useCounter } from './useCounter'
+
+export default {
+    setup() {
+        const { count, increment, decrement } = useCounter(10)
+        
+        return {
+            count,
+            increment,
+            decrement
+        }
+    }
+}
+\`\`\`
+
+### 2. 异步数据处理
+
+组合式 API 使异步数据处理更加直观：
+
+\`\`\`javascript
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+
+export default {
+    setup() {
+        const posts = ref([])
+        const loading = ref(false)
+        const error = ref(null)
+        
+        async function fetchPosts() {
+            loading.value = true
+            try {
+                const response = await axios.get('/api/posts')
+                posts.value = response.data
+            } catch (err) {
+                error.value = err
+            } finally {
+                loading.value = false
+            }
+        }
+        
+        onMounted(fetchPosts)
+        
+        return {
+            posts,
+            loading,
+            error,
+            fetchPosts
+        }
+    }
+}
+\`\`\`
+
+## 最佳实践
+
+1. **按功能组织代码**：将相关功能放在一起
+2. **使用组合式函数**：提取可复用的逻辑
+3. **合理使用响应式引用**：\`ref\` 用于基本类型，\`reactive\` 用于对象
+4. **利用 TypeScript**：组合式 API 对 TypeScript 支持更好
+
+## 总结
+
+Vue 3 的组合式 API 为 Vue 开发带来了新的可能性，特别是在复杂应用和代码复用方面。虽然它有一定的学习曲线，但一旦掌握，可以显著提高代码的可维护性和可读性。
+                `
+            },
+            'article2': {
+                title: 'TypeScript 类型系统深入',
+                date: '2023年9月28日',
+                content: `
+# TypeScript 类型系统深入
+
+TypeScript 的类型系统是其最强大的特性之一。本文将深入探讨 TypeScript 类型系统的高级特性和实际应用。
+
+## 基础类型
+
+TypeScript 支持 JavaScript 的所有基本类型：
+
+\`\`\`typescript
+let isDone: boolean = false;
+let decimal: number = 6;
+let color: string = "blue";
+let list: number[] = [1, 2, 3];
+let tuple: [string, number] = ["hello", 10];
+\`\`\`
+
+## 高级类型
+
+### 1. 联合类型
+
+联合类型表示一个值可以是几种类型之一：
+
+\`\`\`typescript
+let id: string | number;
+id = "123"; // OK
+id = 123;   // OK
+id = true;   // Error
+\`\`\`
+
+### 2. 交叉类型
+
+交叉类型将多个类型合并为一个类型：
+
+\`\`\`typescript
+interface Person {
+    name: string;
+    age: number;
+}
+
+interface Employee {
+    company: string;
+    salary: number;
+}
+
+type EmployeePerson = Person & Employee;
+
+const john: EmployeePerson = {
+    name: "John",
+    age: 30,
+    company: "Acme",
+    salary: 50000
+};
+\`\`\`
+
+### 3. 类型别名
+
+类型别名可以给类型起一个新名字：
+
+\`\`\`typescript
+type StringOrNumber = string | number;
+
+function padLeft(value: string, padding: StringOrNumber) {
+    // ...
+}
+\`\`\`
+
+## 泛型
+
+泛型提供了代码重用的另一种方式：
+
+\`\`\`typescript
+function identity<T>(arg: T): T {
+    return arg;
+}
+
+let output = identity<string>("myString");
+\`\`\`
+
+## 实用工具类型
+
+TypeScript 提供了一些内置的实用工具类型：
+
+\`\`\`typescript
+interface Todo {
+    title: string;
+    description: string;
+    completed: boolean;
+}
+
+// Partial 使所有属性变为可选
+type PartialTodo = Partial<Todo>;
+
+// Readonly 使所有属性变为只读
+type ReadonlyTodo = Readonly<Todo>;
+
+// Pick 从类型中选择部分属性
+type TodoPreview = Pick<Todo, "title" | "completed">;
+\`\`\`
+
+## 类型推断
+
+TypeScript 的类型推断非常强大：
+
+\`\`\`typescript
+let x = 3; // x 被推断为 number
+let y = [0, 1, null]; // y 被推断为 (number | null)[]
+\`\`\`
+
+## 总结
+
+TypeScript 的类型系统提供了强大的工具来构建健壮、可维护的应用程序。通过深入理解这些特性，你可以编写出更安全、更清晰的代码。
+                `
+            },
+            'article3': {
+                title: 'Tailwind CSS 实战技巧',
+                date: '2023年9月10日',
+                content: `
+# Tailwind CSS 实战技巧
+
+Tailwind CSS 是一个实用优先的 CSS 框架，它通过组合低级的实用类来快速构建自定义设计。本文将分享一些 Tailwind CSS 的实战技巧。
+
+## 1. 响应式设计
+
+Tailwind 使用移动优先的断点系统：
+
+\`\`\`html
+<!-- 默认样式 (移动设备) -->
+<div class="text-sm bg-gray-100">
+    <!-- 中等屏幕及以上 -->
+    <div class="md:text-base md:bg-gray-200">
+        <!-- 大屏幕及以上 -->
+        <div class="lg:text-lg lg:bg-gray-300">
+            <!-- 超大屏幕 -->
+            <div class="xl:text-xl xl:bg-gray-400">
+                响应式文本
+            </div>
+        </div>
+    </div>
+</div>
+\`\`\`
+
+## 2. 暗黑模式
+
+Tailwind 支持暗黑模式：
+
+\`\`\`html
+<div class="bg-white dark:bg-gray-800">
+    <h1 class="text-gray-900 dark:text-white">标题</h1>
+    <p class="text-gray-600 dark:text-gray-300">内容</p>
+</div>
+\`\`\`
+
+在 \`tailwind.config.js\` 中启用暗黑模式：
+
+\`\`\`javascript
+module.exports = {
+    darkMode: 'class', // 或 'media'
+    // ...
+}
+\`\`\`
+
+## 3. 自定义配置
+
+你可以轻松自定义 Tailwind 的配置：
+
+\`\`\`javascript
+// tailwind.config.js
+module.exports = {
+    theme: {
+        extend: {
+            colors: {
+                primary: '#3b82f6',
+                secondary: '#10b981',
+            },
+            spacing: {
+                '128': '32rem',
+            }
+        }
+    }
+}
+\`\`\`
+
+## 4. 实用技巧
+
+### 4.1 悬停和焦点状态
+
+\`\`\`html
+<button class="bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    按钮
+</button>
+\`\`\`
+
+### 4.2 过渡动画
+
+\`\`\`html
+<button class="transition duration-500 ease-in-out bg-blue-500 hover:bg-blue-700 transform hover:-translate-y-1">
+    悬停动画
+</button>
+\`\`\`
+
+### 4.3 网格布局
+
+\`\`\`html
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="bg-gray-100 p-4">项目1</div>
+    <div class="bg-gray-100 p-4">项目2</div>
+    <div class="bg-gray-100 p-4">项目3</div>
+</div>
+\`\`\`
+
+## 5. 与组件框架集成
+
+### 5.1 React 组件
+
+\`\`\`javascript
+function Card({ title, children }) {
+    return (
+        <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-xl font-semibold mb-4">{title}</h3>
+            <div className="text-gray-600">{children}</div>
+        </div>
+    )
+}
+\`\`\`
+
+### 5.2 Vue 组件
+
+\`\`\`html
+<template>
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-xl font-semibold mb-4">{{ title }}</h3>
+        <div class="text-gray-600">
+            <slot></slot>
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    props: ['title']
+}
+</script>
+\`\`\`
+
+## 总结
+
+Tailwind CSS 通过实用优先的方法，提供了一种高效、灵活的方式来构建现代用户界面。掌握这些技巧可以帮助你更高效地使用 Tailwind CSS。
+                `
+            },
+            'article4': {
+                title: 'React Hooks 最佳实践',
+                date: '2023年8月22日',
+                content: `
+# React Hooks 最佳实践
+
+React Hooks 是 React 16.8 引入的新特性，它让你在不编写 class 的情况下使用 state 和其他 React 特性。本文将分享 React Hooks 的最佳实践。
+
+## 基础 Hooks
+
+### 1. useState
+
+\`useState\` 用于在函数组件中添加局部 state：
+
+\`\`\`javascript
+import React, { useState } from 'react';
+
+function Example() {
+    const [count, setCount] = useState(0);
+
+    return (
+        <div>
+            <p>You clicked {count} times</p>
+            <button onClick={() => setCount(count + 1)}>
+                Click me
+            </button>
+        </div>
+    );
+}
+\`\`\`
+
+### 2. useEffect
+
+\`useEffect\` 用于处理副作用：
+
+\`\`\`javascript
+import React, { useState, useEffect } from 'react';
+
+function Example() {
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        document.title = \`You clicked \${count} times\`;
+    }, [count]); // 仅在 count 更改时更新
+
+    return (
+        <div>
+            <p>You clicked {count} times</p>
+            <button onClick={() => setCount(count + 1)}>
+                Click me
+            </button>
+        </div>
+    );
+}
+\`\`\`
+
+## 高级 Hooks
+
+### 1. useReducer
+
+\`useReducer\` 适用于管理包含多个子值的 state 对象：
+
+\`\`\`javascript
+const initialState = {count: 0};
+
+function reducer(state, action) {
+    switch (action.type) {
+        case 'increment':
+            return {count: state.count + 1};
+        case 'decrement':
+            return {count: state.count - 1};
+        default:
+            throw new Error();
+    }
+}
+
+function Counter() {
+    const [state, dispatch] = useReducer(reducer, initialState);
+    return (
+        <>
+            Count: {state.count}
+            <button onClick={() => dispatch({type: 'increment'})}>+</button>
+            <button onClick={() => dispatch({type: 'decrement'})}>-</button>
+        </>
+    );
+}
+\`\`\`
+
+### 2. useCallback
+
+\`useCallback\` 返回一个 memoized 回调函数：
+
+\`\`\`javascript
+const memoizedCallback = useCallback(
+    () => {
+        doSomething(a, b);
+    },
+    [a, b],
+);
+\`\`\`
+
+### 3. useMemo
+
+\`useMemo\` 返回一个 memoized 值：
+
+\`\`\`javascript
+const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
+\`\`\`
+
+## 自定义 Hooks
+
+自定义 Hook 是一个函数，其名称以 "use" 开头，可以调用其他 Hook：
+
+\`\`\`javascript
+import { useState, useEffect } from 'react';
+
+function useFriendStatus(friendID) {
+    const [isOnline, setIsOnline] = useState(null);
+
+    useEffect(() => {
+        function handleStatusChange(status) {
+            setIsOnline(status.isOnline);
+        }
+
+        ChatAPI.subscribeToFriendStatus(friendID, handleStatusChange);
+        return () => {
+            ChatAPI.unsubscribeFromFriendStatus(friendID, handleStatusChange);
+        };
+    }, [friendID]);
+
+    return isOnline;
+}
+\`\`\`
+
+## 最佳实践
+
+1. **只在顶层调用 Hook**：不要在循环、条件或嵌套函数中调用 Hook
+2. **只在 React 函数中调用 Hook**：不要在普通的 JavaScript 函数中调用 Hook
+3. **使用 eslint-plugin-react-hooks**：这个 ESLint 插件会强制执行 Hook 规则
+4. **合理拆分逻辑**：将复杂逻辑拆分为多个小 Hook
+5. **避免过度优化**：不要过早使用 \`useMemo\` 和 \`useCallback\`
+
+## 总结
+
+React Hooks 提供了一种更直接的方式来使用 React 的特性，使代码更简洁、更易于理解和测试。遵循这些最佳实践可以帮助你更好地利用 Hooks 的强大功能。
+                `
+            }
+        };
+
+        // 页面切换函数
+        function showHome() {
+            document.getElementById('home-page').classList.remove('hidden');
+            document.getElementById('articles-page').classList.add('hidden');
+            document.getElementById('article-page').classList.add('hidden');
+            document.getElementById('about-page').classList.add('hidden');
+        }
+
+        function showArticles() {
+            document.getElementById('home-page').classList.add('hidden');
+            document.getElementById('articles-page').classList.remove('hidden');
+            document.getElementById('article-page').classList.add('hidden');
+            document.getElementById('about-page').classList.add('hidden');
+        }
+
+        function showArticle(articleId) {
+            const article = articles[articleId];
+            document.getElementById('article-title').textContent = article.title;
+            document.getElementById('article-content').innerHTML = marked.parse(article.content);
+            
+            document.getElementById('home-page').classList.add('hidden');
+            document.getElementById('articles-page').classList.add('hidden');
+            document.getElementById('article-page').classList.remove('hidden');
+            document.getElementById('about-page').classList.add('hidden');
+        }
+
+        function showAbout() {
+            document.getElementById('home-page').classList.add('hidden');
+            document.getElementById('articles-page').classList.add('hidden');
+            document.getElementById('article-page').classList.add('hidden');
+            document.getElementById('about-page').classList.remove('hidden');
+        }
+
+        // 移动端菜单切换
+        function toggleMobileMenu() {
+            const overlay = document.getElementById('mobileMenuOverlay');
+            const menu = document.getElementById('mobileMenu');
+            
+            overlay.classList.toggle('hidden');
+            menu.classList.toggle('translate-x-full');
+            menu.classList.toggle('translate-x-0');
+        }
+
+        // 初始化显示首页
+        showHome();
+
+        // 移动端菜单按钮点击事件
+        document.getElementById('mobileMenuButton').addEventListener('click', toggleMobileMenu);
+        document.getElementById('mobileMenuOverlay').addEventListener('click', toggleMobileMenu);
+
+        // 模拟从目录加载 Markdown 文件
+        // 实际应用中，这里可以通过 fetch API 从服务器获取 Markdown 文件
+        function loadMarkdownFiles() {
+            // 模拟从 /articles 目录加载 Markdown 文件
+            console.log('加载 Markdown 文件...');
+        }
+
+        // 页面加载完成后执行
+        window.addEventListener('DOMContentLoaded', () => {
+            loadMarkdownFiles();
+        });
+    </script>
+</body>
+</html>
